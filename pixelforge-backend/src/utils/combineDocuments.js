@@ -1,5 +1,5 @@
 export const combineDocuments = (documents) => {
     return documents.map(
-            document => document.content
+            document => document.pageContent ?? document.content
         ).join('\n\n')
 }
