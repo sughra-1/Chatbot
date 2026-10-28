@@ -17,7 +17,40 @@ ollama pull nomic-embed-text
 ```
 
 ## 2. Supabase
-Kör SQL-koden i Supabase SQL Editor för att skapa tabellen `documents` (vector 768) och funktionen `match_documents`.
+Kör följande i Supabase SQL Editor. Den skapar tabellen `documents` (vector 768 för `nomic-embed-text`) och sökfunktionen `match_documents`:
+
+```sql
+create extension if not exists vector;
+
+create table if not exists documents (
+  id bigserial primary key,
+  content text,
+  metadata jsonb,
+  embedding vector(768)
+);
+
+create or replace function match_documents (
+  query_embedding vector(768),
+  match_count int default null,
+  filter jsonb default '{}'
+) returns table (id bigint, content text, metadata jsonb, similarity float)
+language plpgsql as $$
+#variable_conflict use_column
+begin
+  return query
+  select id, content, metadata,
+         1 - (documents.embedding <=> query_embedding) as similarity
+  from documents
+  where metadata @> filter
+  order by documents.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+
+grant select, insert, update, delete on table public.documents to service_role;
+grant usage, select on all sequences in schema public to service_role;
+grant execute on function match_documents to service_role;
+```
 
 ## 3. Backend
 ```bash
@@ -26,8 +59,8 @@ npm install
 ```
 Skapa `.env` i `pixelforge-backend/`:
 ```
-SUPABASE_URL=https://ljkubitgqiklsyazxrmy.supabase.co
-SUPABASE_KEY= "sup abase secret key"
+SUPABASE_URL=https://ditt-projekt.supabase.co
+SUPABASE_KEY=din-service-role-nyckel
 OLLAMA_LLM=qwen3:4b
 OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 PORT=8080
