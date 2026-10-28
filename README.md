@@ -26,8 +26,8 @@ npm install
 ```
 Skapa `.env` i `pixelforge-backend/`:
 ```
-SUPABASE_URL=https://ditt-projekt.supabase.co
-SUPABASE_KEY=din-service-role-nyckel
+SUPABASE_URL=https://ljkubitgqiklsyazxrmy.supabase.co
+SUPABASE_KEY= "sup abase secret key"
 OLLAMA_LLM=qwen3:4b
 OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 PORT=8080
@@ -59,4 +59,4 @@ npm run dev
 - `packages/shared/chatbot/` – chattpanel, meddelanden och `useChat`-hook (historik sparas i localStorage)
 - `packages/core/api/` – `askChatbot()` anropar backend
 - Chatbotten monteras i `Layout` och syns på alla sidor
-oktober 2026.** Schema publiceras senare. Du ska kunna demonstrera chatbotten och förklara hur du har implementerat RAG, tools, konversationshistorik och eventuell VG-funktionalitet.
+
