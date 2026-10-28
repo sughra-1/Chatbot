@@ -6,6 +6,7 @@ import { retrieveDocuments } from './retriever.ai.js';
 import { combineDocuments } from '../utils/combineDocuments.js';
 import { routingPrompt } from "./prompts.ai.js";
 import { routingSchema } from "./schemas.ai.js";
+import { cleanAnswer } from '../utils/cleanAnswer.js';
 
 export const llmRoutingChain = RunnableSequence.from([
     routingPrompt,
@@ -16,7 +17,8 @@ export const llmRoutingChain = RunnableSequence.from([
 const standaloneQuestionChain = RunnableSequence.from([
     standaloneQuestionPrompt,
     llm,
-    new StringOutputParser()
+    new StringOutputParser(),
+    cleanAnswer // remove any <think> text so only the question is searched
 ]);
 
 // Steg 2. Hämta relevant information/kontext från databasen

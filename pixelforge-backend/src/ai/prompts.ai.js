@@ -77,6 +77,11 @@ export const routingPrompt = ChatPromptTemplate.fromMessages([
 
         Question: "What did you just tell me?"
         Route: tools
+
+        Questions can be in Swedish or English, e.g.
+        "Hur lång är leveranstiden?" -> rag
+        "Vilka tangentbord har ni?" -> tools
+        /no_think
         `
     ],
     new MessagesPlaceholder("history"),
@@ -111,6 +116,7 @@ export const assistantPrompt = ChatPromptTemplate.fromMessages([
         - Never invent prices or stock information.
         - Never show tool calls, JSON or technical details.
         - Give clear and concise answers.
+        /no_think
         `
     ],
     new MessagesPlaceholder("history"),
@@ -139,6 +145,9 @@ export const standaloneQuestionPrompt =
             - Do not invent information.
             - If the question is already standalone, keep it
               essentially unchanged.
+            - ALWAYS write the question in English, even if the
+              user writes in Swedish. The support documents are
+              in English, so an English question finds the right text.
             - Return ONLY the rewritten question.
             - Do not provide an answer.
 
@@ -163,6 +172,15 @@ export const standaloneQuestionPrompt =
 
             Standalone question:
             "How long does the PixelForge warranty last?"
+
+            Example:
+
+            User:
+            "Hur lång är leveranstiden?"
+
+            Standalone question:
+            "How long is the delivery time?"
+            /no_think
             `
         ],
         new MessagesPlaceholder("history"),
@@ -191,7 +209,12 @@ export const answerPrompt =
             - Use the conversation history to understand
               follow-up questions.
             - Answer clearly and naturally.
-            - Answer in the same language as the user.
+            - Keep the answer short: 2-4 sentences, unless the user
+              asks for more details.
+            - Answer in the same language as the user's question.
+            - Give ONLY the final answer. Do not explain your reasoning,
+              and do not talk about "the context" or the documents.
+            /no_think
             `
         ],
         new MessagesPlaceholder("history"),
